@@ -1,0 +1,40 @@
+---
+services:
+  warp:
+    image: monius/docker-warp-socks:latest
+    privileged: true
+    expose:
+      - 9091
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: 0
+      net.ipv4.conf.all.src_valid_mark: 1
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - https://www.cloudflare.com/cdn-cgi/trace
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  acestream:
+    tmpfs: /dev/disk/by-id:noexec,rw,size=4k
+    volumes:
+      - ./acestream/acestream.conf:/opt/acestream/acestream.conf
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+      - SYS_ADMIN
+    ports:
+      - 8621:8621
+      - 6878:6878
+    build: ./acestream
+    depends_on:
+      - warp
+    environment:
+      - PROXY_URI="socks5h://warp:9091"
+
