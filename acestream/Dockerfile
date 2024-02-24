@@ -5,7 +5,7 @@ RUN apt update -y && apt upgrade -y && apt -y install libpython2.7 python-pkg-re
 RUN mkdir -p /opt/acestream
 
 ADD acestream.conf  /opt/acestream
-ADD entrypoint.sh  /opt/
+ADD entrypoint.sh  /opt/entrypoint.sh
 ADD redsocks.conf /etc/redsocks.conf
 
 RUN wget -P /opt/acestream https://download.acestream.media/linux/acestream_3.1.49_ubuntu_18.04_x86_64.tar.gz
